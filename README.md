@@ -70,7 +70,7 @@ Ten Thousands Later ~~~~~~ <br>
 一个名叫 LockEnemy 的能力就被做好了，看看效果<br>
 
 **常规**
-https://user-images.githubusercontent.com/11385187/190614549-dba48580-81e6-4dd7-9d94-1fb769753ed9.mp4
+<video src='https://user-images.githubusercontent.com/11385187/190614549-dba48580-81e6-4dd7-9d94-1fb769753ed9.mp4' controls="controls"/>
 **屏幕外 + 视野后方**
 
 
