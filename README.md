@@ -70,11 +70,11 @@ Ten Thousands Later ~~~~~~ <br>
 一个名叫 LockEnemy 的能力就被做好了，看看效果<br>
 
 **常规**
-<video src='https://user-images.githubusercontent.com/11385187/190614549-dba48580-81e6-4dd7-9d94-1fb769753ed9.mp4' controls="controls"/>
+<video src='https://user-images.githubusercontent.com/11385187/190614549-dba48580-81e6-4dd7-9d94-1fb769753ed9.mp4' controls="controls"></video>
+
 **屏幕外 + 视野后方**
 
-
-<video src='https://user-images.githubusercontent.com/11385187/190618082-81e973a7-458b-4385-be98-9615f879a3d0.mp4" controls="controls"/>
+<video src='https://user-images.githubusercontent.com/11385187/190618082-81e973a7-458b-4385-be98-9615f879a3d0.mp4' controls="controls"></video>
 
 
 效果看起来也是对对的，传火成功。。。
