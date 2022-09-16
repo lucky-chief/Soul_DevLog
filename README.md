@@ -16,4 +16,4 @@
 ## 2022/9/16
 ### 游戏开发场景
 Blender 里简单拉个盒子<br>
-<video src="/assets/Screenshots/ScreenRecorder-20220916-145301.978.mp4" width=400/>
+<video src="https://github.com/lucky-chief/Soul_DevLog/blob/main/assets/Screenshots/ScreenRecorder-20220916-145301.978.mp4" controls="controls" style="max-width: 730px;"></video>
