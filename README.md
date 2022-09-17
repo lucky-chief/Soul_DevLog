@@ -66,7 +66,7 @@ OK，这块就是俺的魂之地！我想传火。
 *在解决 使用 Physics.SphereCastNonAlloc，返回的结果 m_RaycastHits[] 每个元素的 distance 和 point 都是0 的问题*<br>
 *查看相关文档*<br>
 *正在测试*<br>
-Ten Thousands Later ~~~~~~ <br>
+Ten Thousand Years Later ~~~~~~ <br>
 一个名叫 LockEnemy 的能力就被做好了，看看效果<br>
 
 **常规**
@@ -78,3 +78,33 @@ Ten Thousands Later ~~~~~~ <br>
 
 
 效果看起来也是对对的，传火成功。。。
+
+## 2022/9/17
+### 锁定目标时，相机LookAt目标，相机视野无法改变
+今天是礼拜六啊，睡了个饱觉（睡到10:30），要不是北京顺义的防空警报一直响个不停我还能睡~~~~~~~<br>
+** 开始简单的以为锁定目标时就是把相机的targe(follow + lookat)设置成目标，但发现其实不对。相机的运动逻辑应该是 follow target 仍然是玩家自己，而 look target 是目标。** <br>
+看了UCC代码，有一个类叫 AimAssist, 就是瞄准助手，能够帮助做这个目标锁定功能，丰富一下我的 LockEnemy 代码。<br>
+Ten Thousand Years Later ~~~~~~ <br>
+<video src="https://user-images.githubusercontent.com/11385187/190845662-1081c12b-74fa-4061-9549-496564258141.mp4" controls="controls"></video>
+
+在实现的过程中，发现这个 AimAssist 设置target之后，用户的look输入还是会影响到相机的视野，其实在 ** 黑魂3 **里，锁定怪之后，相机是不受用户的输入影响的，即如果摇动视野遥感相机视野无变化。更改 PlayerInput.LookSensitivity = 0 也无济于事，现在我的处理方案是：
+```
+m_PlayerInput.enabled = false;
+```
+** 还未发现什么副作用~~~~ ** <br>
+
+另外还有一个体验上的问题，就是锁定的时候玩家头部，身体的IK需要单独设置一下，能够让玩家模型在战斗是的头部一直盯着目标，体验上看起来更真实。于是在 锁定敌人开始是做了如下处理：
+```
+ if (m_CharactorIK) {
+   m_CharactorIK.LookAtHeadWeight = 1f;
+   m_CharactorIK.LookAtBodyWeight = 0.1f;
+ }
+```
+身体稍稍给点，否则太夸张体验会不好。看看效果：
+<video src="https://user-images.githubusercontent.com/11385187/190846854-ee9b5742-967a-423b-a755-d21bca4fe106.mp4" controls="controls"></video>
+
+可以看到在高处锁定敌人时，他的头在朝下看。这就很有感觉。。。。。
+
+好的，锁定敌人相机运动逻辑就这样先~~~~~
+
+
