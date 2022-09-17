@@ -87,11 +87,11 @@ Ten Thousand Years Later ~~~~~~ <br>
 Ten Thousand Years Later ~~~~~~ <br>
 <video src="https://user-images.githubusercontent.com/11385187/190845662-1081c12b-74fa-4061-9549-496564258141.mp4" controls="controls"></video>
 
-在实现的过程中，发现这个 AimAssist 设置target之后，用户的look输入还是会影响到相机的视野，其实在 ** 黑魂3 **里，锁定怪之后，相机是不受用户的输入影响的，即如果摇动视野遥感相机视野无变化。更改 PlayerInput.LookSensitivity = 0 也无济于事，现在我的处理方案是：
+在实现的过程中，发现这个 AimAssist 设置target之后，用户的look输入还是会影响到相机的视野，其实在 **黑魂3**里，锁定怪之后，相机是不受用户的输入影响的，即如果操作手柄右摇杆相机视野无变化。更改 PlayerInput.LookSensitivity = 0 也无济于事，现在我的处理方案是：
 ```
 m_PlayerInput.enabled = false;
 ```
-** 还未发现什么副作用~~~~ ** <br>
+** 简单粗暴，还未发现什么副作用~~~~ ** <br>
 
 另外还有一个体验上的问题，就是锁定的时候玩家头部，身体的IK需要单独设置一下，能够让玩家模型在战斗是的头部一直盯着目标，体验上看起来更真实。于是在 锁定敌人开始是做了如下处理：
 ```
@@ -100,7 +100,8 @@ m_PlayerInput.enabled = false;
    m_CharactorIK.LookAtBodyWeight = 0.1f;
  }
 ```
-身体稍稍给点，否则太夸张体验会不好。看看效果：
+IK的target，UCC框架已经帮忙处理了，我只要设置下权重即可，被照顾的感觉真好。。<br>
+头部IK拉满，身体稍稍给点，否则太夸张体验会不好。看看效果：
 <video src="https://user-images.githubusercontent.com/11385187/190846854-ee9b5742-967a-423b-a755-d21bca4fe106.mp4" controls="controls"></video>
 
 可以看到在高处锁定敌人时，他的头在朝下看。这就很有感觉。。。。。
