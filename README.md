@@ -77,7 +77,31 @@ Ten Thousand Years Later ~~~~~~ <br>
 <video src='https://user-images.githubusercontent.com/11385187/190618082-81e973a7-458b-4385-be98-9615f879a3d0.mp4' controls="controls"></video>
 
 
-效果看起来也是对对的，传火成功。。。
+效果看起来也是对对的，传火成功。。。<br>
+给LockEnemy 一个可序列化的字段 m_MaxLockDistance, 表示最大可锁定距离<br>
+![image](https://user-images.githubusercontent.com/11385187/190884290-4bec95ad-30b3-473f-969c-33ae6f5e636a.png)
+参照 **黑魂III**的感觉， 设置8差不多。<br>
+
+在 **黑魂III**里，还有一个小细节，就是如果没有锁定到目标，相机视野会校正到人物的正前方。我也要~~~~~<br>
+看了下UCC的源码，发现ViewType类里有个虚方法 **Reset**
+```
+/// <summary>
+/// Resets the ViewType's character rotation and springs.
+/// </summary>
+/// <param name="characterRotation">The rotation of the character.</param>
+public virtual void Reset(Quaternion characterRotation) { }
+```
+尝试下，在我的 LockEnemy 里添加如下代码
+```
+//如果没有转中目标，重置视野到玩家正前方
+if(m_LockedTarget == null) {
+   m_CameraController.ActiveViewType.Reset(m_Transform.rotation);
+}
+```
+看看效果
+<video src='https://user-images.githubusercontent.com/11385187/190884503-5ac57125-8f10-4983-890a-4b57e4f1c1d5.mp4' controls='controls'/>
+<br>
+效果看起来是对了，但是太硬了，一帧就转过来了。
 
 ## 2022/9/17
 ### 锁定目标时，相机LookAt目标，相机视野无法改变
