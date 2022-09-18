@@ -108,4 +108,42 @@ IK的target，UCC框架已经帮忙处理了，我只要设置下权重即可，
 
 好的，锁定敌人相机运动逻辑就这样先~~~~~
 
+## 2022/9/18
+### 锁定目标时，人物的移动逻辑（比如左右移动变为左右侧步，后退）
+这个的话，UCC就有提供功能。就是切换一下人物的移动方式即可<br>
+![image](https://user-images.githubusercontent.com/11385187/190882733-ee7b4997-4f8e-4806-a3aa-5d468658cee5.png)
+<br>
+现在在人物身上我挂了两种移动方式，Adventure 是普通的行走方式， Combat 就是战斗时的移动方式。在成功锁定目标后，意味着进入了战斗模式，只要把人物移动方式切换为 Combat 即可。<br>
+那为了做到这点，我现在的做法是添加一个人物状态叫 Combat, 在UCC的 Ability 的 inspector 面板中有一个字段是 **State**， 即表示成功触发能力后需要切到的状态<br>
+![image](https://user-images.githubusercontent.com/11385187/190882870-32114c9f-5929-4653-a708-037599a2ec7b.png)
+![image](https://user-images.githubusercontent.com/11385187/190882879-14f99e46-071d-4a06-acd5-88802716894e.png)
+<br>
+在人物状态里有一个 preset的字段， 这个是用来切到这个状态是要改变哪些属性的值，对于我的情况就是要把人物的 movementtype 改为 combat <br>
+![image](https://user-images.githubusercontent.com/11385187/190883059-c105bbbf-90f3-4688-bd50-9c30d77ee6f8.png)
+<br>
+好的，这样的话，人物的移动逻辑应该ok了。然后到相机，UCC里，相机其实也有不同的类型叫 ViewTypes <br>
+![image](https://user-images.githubusercontent.com/11385187/190882969-fcb60443-a2c7-4a6b-be61-76a8a4f70cf0.png)
+<br>
+这个可以方便地控制不同情况下不同的视野，比如 钻管道时， 相机的FOV 可能需要很小，就可以添加一个类似状态，把这个状态下相机的FOV调成自己需要的值。剩下的就是当钻管道场景触发时，把相机viewtype设置成对应的值即可,非常方便<br>
+回到我的情况就是在锁定目标时需要把viewtype设置成 **Third Person Combat**， 这个状态我是给相机的 position smoothing 字段设置了值，目的是人物在战斗是，相机是**软跟随**的。<br>
+![image](https://user-images.githubusercontent.com/11385187/190883366-f2305ab4-5d7c-4e91-b18c-1ab8502f323b.png)
+ <br>
+ 
+代码中，需要在锁定目标的Ability开始后切换相机的viewtype <br>
+```
+var combatVT = m_CameraController.GetViewType<Combat>();
+if (combatVT != null) {
+   m_CameraController.SetViewType(combatVT.GetType(), true);
+}
+```
+当然也别忘了在退出锁定目标时要设置回来
+```
+var adventureVT = m_CameraController.GetViewType<Adventure>();
+if (adventureVT != null) {
+   m_CameraController.SetViewType(adventureVT.GetType(), true);
+}
+```
+
+
+<video src='https://user-images.githubusercontent.com/11385187/190883620-79df3d84-6566-47d2-acb5-b85826f1bfb0.mp4' controls='controls'/>
 
