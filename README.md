@@ -100,7 +100,6 @@ if(m_LockedTarget == null) {
 ```
 看看效果
 <video src='https://user-images.githubusercontent.com/11385187/190884503-5ac57125-8f10-4983-890a-4b57e4f1c1d5.mp4' controls='controls'/>
-<br>
 效果看起来是对了，但是太硬了，一帧就转过来了。
 
 ## 2022/9/17
