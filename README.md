@@ -99,7 +99,7 @@ if(m_LockedTarget == null) {
 }
 ```
 看看效果
-<video src='https://user-images.githubusercontent.com/11385187/190884503-5ac57125-8f10-4983-890a-4b57e4f1c1d5.mp4' controls='controls'/>
+<video src='https://user-images.githubusercontent.com/11385187/190884503-5ac57125-8f10-4983-890a-4b57e4f1c1d5.mp4' controls='controls'></video>
 效果看起来是对了，但是太硬了，一帧就转过来了。
 
 ## 2022/9/17
@@ -167,9 +167,83 @@ if (adventureVT != null) {
 }
 ```
 
-
-<video src='https://user-images.githubusercontent.com/11385187/190883620-79df3d84-6566-47d2-acb5-b85826f1bfb0.mp4' controls='controls'/>
+<video src='https://user-images.githubusercontent.com/11385187/190883620-79df3d84-6566-47d2-acb5-b85826f1bfb0.mp4' controls='controls'></video>
 
 ## 2022/9/20
 ### 按方向（左右）锁定目标
-昨天一直再看UCC的代码，示例，文档，想搞懂玩家是如何装备新的武器的机制。搞得都快放弃了:joy:，还好最后冷静想想，随意放弃不是**不死人**的传火精神，坚持了下来，也略微窥探了UCC的切换装备的做法。然后想到还有目标的锁定切换没有做记录~~~~~~
+昨天一直再看UCC的代码，示例，文档，想搞懂玩家是如何装备新的武器的机制。搞得都快放弃了:joy:，还好最后冷静想想，随意放弃不是**不死人**的传火精神，坚持了下来，也略微窥探了UCC的切换装备的做法，回归主线吧~~~~~~<br>
+锁定目标切换在选取目标的基础上在添加下规则就好。
+1. 玩家按下特定健触发切换目标，比如z健向左选择目标，x健向右选择
+2. 排除自己
+3. 利用向量叉乘来判断目标在当前目标的左边or右边
+
+记录下LockEnemy Ability关键部分代码
+```C#
+private void SelectTarget(bool rightSide = true)
+ {
+     Transform _target = null;
+     if (m_LockedTarget) {
+         _target = m_LockedTarget;
+     }
+
+     Vector3 lookDir = m_CharacterLocomotion.LookSource.LookDirection(true); //相机的 local z 方向，一般不是水平的
+     Vector3 right = Vector3.Cross(Vector3.up, lookDir); //得到 水平右
+     Vector3 forword = Vector3.Cross(right, Vector3.up).normalized; //得到 水平前
+
+     int hitCount = Physics.SphereCastNonAlloc(m_Transform.position, m_MaxLockDistance, forword, m_RaycastHits, m_MaxLockDistance, m_CharacterLayerManager.EnemyLayers);
+
+     //使用 Physics.SphereCastNonAlloc，返回的结果 m_RaycastHits[] 每个元素的 distance 和 point 都是0。
+     //不知道是否是Unity的bug。官方该API的文档也未见说明
+     //所以在此遍历，重新给 distance 和 point 赋值。
+     for (int i = 0; i < hitCount; i++) {
+         m_RaycastHits[i].distance = Vector3.Distance(m_Transform.position, m_RaycastHits[i].collider.bounds.center);
+         m_RaycastHits[i].point = m_RaycastHits[i].transform.position;
+     }
+
+     if (hitCount > 0) {
+         for (int i = 0; i < hitCount; ++i) {
+             var closestRaycastHit = QuickSelect.SmallestK(m_RaycastHits, hitCount, i, m_RaycastHitComparer);
+             var closestRaycastHitTransform = closestRaycastHit.transform;
+
+             //如果是当前已锁定的目标，则不在锁定范围
+             if(_target && _target == closestRaycastHitTransform) {
+                 continue;
+             }
+
+             //如果在屏幕外，则不在锁定范围
+             var viewPortPoint = m_Camera.WorldToViewportPoint(closestRaycastHit.point);
+             if (viewPortPoint.x < 0f || viewPortPoint.x > 1f || viewPortPoint.y < 0f || viewPortPoint.y > 1f) {
+                 continue;
+             }
+
+             var v = closestRaycastHit.point;
+             v.y = m_AimAssist.transform.position.y;
+             v = (v - m_AimAssist.transform.position).normalized;
+             float dot = Vector3.Dot(forword, v);
+             //如果在视野后方，则不在锁定范围
+             if (dot < 0f) {
+                 continue;
+             }
+             //要选择当前锁定目标的右边的
+             if (_target && rightSide) {
+                 if(Vector3.Cross(forword, v).y < 0) {
+                     continue;
+                 }
+             }
+
+             if (_target && !rightSide) {
+                 if (Vector3.Cross(forword, v).y > 0) {
+                     continue;
+                 }
+             }
+
+             m_LockedTarget = closestRaycastHitTransform;
+             break;
+         }
+     }
+ }
+```
+效果
+
+<video src='https://user-images.githubusercontent.com/11385187/191199645-2c1c3e49-44a0-4c5e-8d93-4888fd5fb1d4.mp4' controls='controls></video>
+
