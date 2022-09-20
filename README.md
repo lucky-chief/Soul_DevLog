@@ -245,5 +245,6 @@ private void SelectTarget(bool rightSide = true)
 ```
 效果
 
-<video src='https://user-images.githubusercontent.com/11385187/191199645-2c1c3e49-44a0-4c5e-8d93-4888fd5fb1d4.mp4' controls='controls></video>
-
+<video src='https://user-images.githubusercontent.com/11385187/191199645-2c1c3e49-44a0-4c5e-8d93-4888fd5fb1d4.mp4' controls='controls'></video>
+<br>
+这憨货石头人和这斧子就是我昨天的成果，下一个目标就是尝试下不同武器的切换和不同的动作表现。:speak_no_evil:
