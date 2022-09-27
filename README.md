@@ -256,3 +256,17 @@ private void SelectTarget(bool rightSide = true)
 参照**黑魂III**不同武器的表现，分两类：
 * 装备不同武器后的基本动画（idle + walk + run）只是复写了两个手臂的动作，其他部位仍旧是用的人物的基本动画。 比如装备冰狗的大锤的时候，就是右手把锤子抗在肩上，别的部位不变。
 * 攻击时，全部用的武器的全套动作。一般人物的位移也是用的动作里的，Rotation看武器情况用不用动画里的，通常是不用的，即玩家在攻击过程可以改变攻击的朝向。
+### 连续攻击（combos）
+几乎所有的ARPG都能连击，即在一定的时间内连续按下攻击键，能触发combos。<br>
+UCC也提供了Combos的机制，摸索了几天，略懂。在此记录一下。<br>
+第一步需要把所有的连击动作在Animator里串起来，如视频中的剑的攻击有3段
+![image](https://user-images.githubusercontent.com/11385187/192463186-e2656239-e3ad-4f9b-b6ac-abf44ee28b96.png)
+<br>
+设置好各个Transition的条件，需要每个State都要有Transition，否则动作很容易卡住。
+第二步在每个攻击动作加上两个帧事件<br>
+![image](https://user-images.githubusercontent.com/11385187/192480189-780b674b-3849-47bd-b968-5dfd8072f15d.png)
+![image](https://user-images.githubusercontent.com/11385187/192480275-c3ca853c-ed19-441b-88da-768473ee0ab4.png)
+<br>
+第三步在武器上的MeleeWeapon的组件里有个**Animator Audio**的字段，设置上攻击段的参数<br>
+![image](https://user-images.githubusercontent.com/11385187/192481262-ea054490-f660-40f5-a5fe-ad90e4d6c8a3.png)
+
