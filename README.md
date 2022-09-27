@@ -248,3 +248,11 @@ private void SelectTarget(bool rightSide = true)
 <video src='https://user-images.githubusercontent.com/11385187/191199645-2c1c3e49-44a0-4c5e-8d93-4888fd5fb1d4.mp4' controls='controls'></video>
 <br>
 这憨货石头人和这斧子就是我昨天的成果，下一个目标就是尝试下不同武器的切换和不同的动作表现。:speak_no_evil:
+
+## 2022/9/27
+### 不同武器的切换和不同的动作表现
+<video src='https://user-images.githubusercontent.com/11385187/192451208-c496f322-2e49-4a68-b9bd-c5703bcfe65a.mp4' controls='controls'></video>
+<br>
+参照**黑魂III**不同武器的表现，分两类：
+* 装备不同武器后的基本动画（idle + walk + run）只是复写了两个手臂的动作，其他部位仍旧是用的人物的基本动画。 比如装备冰狗的大锤的时候，就是右手把锤子抗在肩上，别的部位不变。
+* 攻击时，全部用的武器的全套动作。一般人物的位移也是用的动作里的，Rotation看武器情况用不用动画里的，通常是不用的，即玩家在攻击过程可以改变攻击的朝向。
