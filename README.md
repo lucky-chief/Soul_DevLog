@@ -264,9 +264,47 @@ UCC也提供了Combos的机制，摸索了几天，略懂。在此记录一下�
 <br>
 设置好各个Transition的条件，需要每个State都要有Transition，否则动作很容易卡住。
 第二步在每个攻击动作加上两个帧事件<br>
+
 ![image](https://user-images.githubusercontent.com/11385187/192480189-780b674b-3849-47bd-b968-5dfd8072f15d.png)
 ![image](https://user-images.githubusercontent.com/11385187/192480275-c3ca853c-ed19-441b-88da-768473ee0ab4.png)
 <br>
+调了两种类型的武器单手剑和双手斧子，发现如果想要Combos连贯些或者说是更容易按出来一些，根据UCC 触发Combos的机制，需要调整**OnAnimatorItemUse**和**OnAnimatorItemUseComplete**的帧事件的位置，然后试下手感，然后调，然后试。。。。。直到你满意或者崩溃为止~~~
 第三步在武器上的MeleeWeapon的组件里有个**Animator Audio**的字段，设置上攻击段的参数<br>
 ![image](https://user-images.githubusercontent.com/11385187/192481262-ea054490-f660-40f5-a5fe-ad90e4d6c8a3.png)
+### Combos 触发原理
+用一个例子说明<br>
+![image](https://user-images.githubusercontent.com/11385187/192820899-3da48573-882f-43c8-850a-1feeed338a17.png)
+<br>
+如上图，有3段攻击，假设第一段攻击的 **OnAnimatorItemUse** 在 **1s** 时刻触发， **OnAnimatorItemUseComplete** 在 **1.5s**时刻触发。有下列情况：
+* 第一段攻击在0s时刻开始
+* 0.6s 时刻收到用户攻击输入， 但是由于第一段攻击的 **OnAnimatorItemUse** 没有触发，所以此次的攻击输入不能打断第一段的攻击，于是第一段攻击继续
+* 1.2s 时刻收到用户攻击输入， 由于此时第一段攻击的 **OnAnimatorItemUse** 已经触发，且 **OnAnimatorItemUseComplete** 没有触发，所以能触发Combos，第一段攻击被打断，进入到第二段攻击。
+* 但如果在1.6s 时刻收到用户攻击输入，由于**OnAnimatorItemUseComplete**已经触发了，所以也无法触发Combos
+* 其他段攻击以此类推
+
+
+## 2022/9/28
+### 翻滚（Roll）
+翻滚是魂游戏的标配了，所以我也想（必须）有。<br>
+先记录下我的视频<br>
+
+<video src="https://user-images.githubusercontent.com/11385187/192824055-3a65e1dc-fe30-48d6-9281-74920482f6f9.mp4" controls="controls"></video>
+<br>
+
+翻滚也分两种时态
+* 冒险时，即如同冒险时行走一样，任何翻滚都是向玩家的前方翻滚
+* 战斗时，此时会有左右前后之分
+
+据此的话，动画状态就需要添加两种时态
+![image](https://user-images.githubusercontent.com/11385187/192825227-c893739f-eb5d-4e3f-8aa5-7d6b4b33f151.png)
+由于翻滚是用到了全身骨骼，所以放到了 **full body layer**。然后战斗时由于涉及到了多个方向的翻滚动作，且因变量是 **HorizontalMovement** 和 **ForwardMovement**， 故而做成了一个二维的 BlendTree。
+![image](https://user-images.githubusercontent.com/11385187/192826131-d01729c6-3785-46ed-b1f9-9662ac30a1c3.png)
+![image](https://user-images.githubusercontent.com/11385187/192826189-09cdae06-c7b1-4645-a7a3-9a2c666ec3ce.png)
+
+接下来就是撸代码了，需要实现一个 Roll 的 Ability。。。。<br>
+*为什么在使用 Roll 能力时会自动结束掉 LockEnemy 能力？？？？*<br>
+*调试代码。。。原因定位到了，原来时 UCC 在使用一个 Ability 时会尝试强制停止别的已激活的 Ability。*<br>
+*于是我在 LockEnemy 中复写了 CanForceStopAbility 方法，强行返回 false， 即不让停止。。。。*<br>
+*在使用 Roll 能力时会自动结束掉 LockEnemy 能力解决掉了，但感觉好不优雅，于是寻求别的方法*<br>
+*发现UCC自带的Aim和我的LockEnemy差不多，但它是一个ItemAbility，于是乎把 LockEnemy 继承自 ItemAbility， 果然也是可以的*<br>
 
